@@ -30,6 +30,7 @@ var DEFAULT_SETTINGS = {
     searchingText: "Searching...",
     deleteText: "&times;",
     animateDropdown: true,
+    autoSelectDropdown: true,
     theme: null,
     zindex: 999,
     resultsFormatter: function(item){ return "<li>" + item[this.propertyToSearch]+ "</li>" },
@@ -240,7 +241,11 @@ $.TokenList = function (input, url_or_data, settings) {
                         var dropdown_item = null;
 
                         if(event.keyCode === KEY.DOWN || event.keyCode === KEY.RIGHT) {
-                            dropdown_item = $(selected_dropdown_item).next();
+                            if(selected_dropdown_item != null || settings.autoSelectDropdown){
+                            	dropdown_item = $(selected_dropdown_item).next();
+                            }else{
+                            	dropdown_item = $("." + settings.classes.dropdownItem2).first()
+                            }
                         } else {
                             dropdown_item = $(selected_dropdown_item).prev();
                         }
@@ -732,8 +737,10 @@ $.TokenList = function (input, url_or_data, settings) {
                     this_li.addClass(settings.classes.dropdownItem2);
                 }
 
-                if(index === 0) {
+                if(index === 0 && settings.autoSelectDropdown) {
                     select_dropdown_item(this_li);
+                }else if(index === 0){
+                    deselect_dropdown_item($(selected_dropdown_item));
                 }
 
                 $.data(this_li.get(0), "tokeninput", value);
